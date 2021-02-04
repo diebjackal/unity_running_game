@@ -32,6 +32,31 @@ public class PlayerMove : MonoBehaviour
         capsuleCollider = GetComponent<CapsuleCollider2D>();
         audioSource = GetComponent<AudioSource>();
     }
+
+    public void PlaySound(string action)
+    {
+        switch (action) {
+            case "JUMP":
+                audioSource.clip = audioJump;
+                break;
+            case "ATTACK":
+                audioSource.clip = audioAttack;
+                break;
+            case "DAMAGED":
+                audioSource.clip = audioDamaged;
+                break;
+            case "ITEM":
+                audioSource.clip = audioItem;
+                break;
+            case "DIE":
+                audioSource.clip = audioItem;
+                break;
+            case "FINISH":
+                audioSource.clip = audioFinish;
+                break;
+        }
+    }
+
     private void Update()
     {
         //Player Jump
@@ -39,7 +64,7 @@ public class PlayerMove : MonoBehaviour
         {
             rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
             anim.SetBool("IsJump", true);
-            audioSource.clip = audioJump;
+            PlaySound("JUMP");
             audioSource.Play();
         }
         
@@ -102,6 +127,8 @@ public class PlayerMove : MonoBehaviour
         if(collision.gameObject.tag == "Item")
         {
             //point
+            PlaySound("ITEM");
+            audioSource.Play();
             bool isBronze = collision.gameObject.name.Contains("BronzeCoin");
             bool isSliver = collision.gameObject.name.Contains("SliverCoin");
             bool isGold = collision.gameObject.name.Contains("GoldCoin");
@@ -116,6 +143,8 @@ public class PlayerMove : MonoBehaviour
             collision.gameObject.SetActive(false);
         }else if (collision.gameObject.tag == "Finish")
         {
+            PlaySound("FINISH");
+            audioSource.Play();
             //Next Stage
             gameManager.NextStage();
         }
@@ -125,6 +154,9 @@ public class PlayerMove : MonoBehaviour
     void OnAttack(Transform enemy)
     {
         //point
+        PlaySound("ATTACK");
+        audioSource.Play();
+
         gameManager.statePoint += 100;
 
         //Attack Reaction
@@ -137,6 +169,8 @@ public class PlayerMove : MonoBehaviour
 
     void OnDamaged(Vector2 targetPosition)
     {
+        PlaySound("DAMAGED");
+        audioSource.Play();
         //health down
         gameManager.HealthDown();
         //On Damaged
@@ -165,10 +199,10 @@ public class PlayerMove : MonoBehaviour
 
     public void OnDie()
     {
+        //enemy Die
         spriteRenderer.color = new Color(1, 1, 1, 0.4f);
 
         spriteRenderer.flipY = true;
-
         capsuleCollider.enabled = false;
 
         rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
