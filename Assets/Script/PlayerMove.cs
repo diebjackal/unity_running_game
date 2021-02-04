@@ -6,19 +6,31 @@ public class PlayerMove : MonoBehaviour
 {
     public GameManager gameManager;
     private int DamagedDuration = 2;
+
     public float maxSpeed;
     public float jumpPower;
+
+    //sound
+    public AudioClip audioJump;
+    public AudioClip audioAttack;
+    public AudioClip audioDamaged;
+    public AudioClip audioItem;
+    public AudioClip audioDie;
+    public AudioClip audioFinish;
 
     Rigidbody2D rigid;
     SpriteRenderer spriteRenderer;
     Animator anim;
     CapsuleCollider2D capsuleCollider;
+    AudioSource audioSource;
+
     private void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
         capsuleCollider = GetComponent<CapsuleCollider2D>();
+        audioSource = GetComponent<AudioSource>();
     }
     private void Update()
     {
@@ -27,6 +39,8 @@ public class PlayerMove : MonoBehaviour
         {
             rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
             anim.SetBool("IsJump", true);
+            audioSource.clip = audioJump;
+            audioSource.Play();
         }
         
         //Stop Speed
