@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
+    private int DamagedDuration = 2;
     public float maxSpeed;
     public float jumpPower;
 
@@ -64,5 +65,39 @@ public class PlayerMove : MonoBehaviour
                     anim.SetBool("IsJump", false);
             }
         }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.tag == "Enemy")
+        {
+            OnDamaged(collision.transform.position);
+        }
+    }
+
+    void OnDamaged(Vector2 targetPosition)
+    {
+        //On Damaged
+        gameObject.layer = 11;
+
+        //View Alpha
+        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+
+        //Reaction Force
+        int dirc = transform.position.x - targetPosition.x > 0 ? 1 : -1;
+        rigid.AddForce(new Vector2(dirc, 1) * 7,ForceMode2D.Impulse);
+        //Animation
+        anim.SetTrigger("DoDamaged");
+
+        //Off Damaged
+        Invoke("OffDamaged", DamagedDuration);
+    }
+
+    void OffDamaged()
+    {
+        //무적 풀기
+        gameObject.layer = 10;
+        //View Alpha
+        spriteRenderer.color = new Color(1, 1, 1, 1);
     }
 }
