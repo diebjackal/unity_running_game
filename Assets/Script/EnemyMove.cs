@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyMove : MonoBehaviour
 {
-    private int sec = 5;
+    private int sec = 3;
     public int nextMove;
 
     Rigidbody2D rigid;
@@ -20,7 +20,7 @@ public class EnemyMove : MonoBehaviour
 
         //Enemy Move
         anim.SetInteger("WalkSpeed", 0);
-        Invoke("Think", sec);
+        Think();
     }
 
     private void FixedUpdate()
@@ -51,7 +51,7 @@ public class EnemyMove : MonoBehaviour
         if (nextMove != 0)
             spriteRenderer.flipX = nextMove == 1;
 
-        float thinkTime = Random.Range(2, 5);
+        float thinkTime = Random.Range(1, 3);
         Invoke("Think", thinkTime);
     }
 
@@ -73,7 +73,7 @@ public class EnemyMove : MonoBehaviour
 
         rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
 
-        Invoke("DeActive", sec);
+        Invoke("DeActive", 5);
     }
 
     void DeActive()

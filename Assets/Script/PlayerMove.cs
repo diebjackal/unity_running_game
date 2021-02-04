@@ -4,18 +4,21 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
+    public GameManager gameManager;
     private int DamagedDuration = 2;
     public float maxSpeed;
     public float jumpPower;
 
     Rigidbody2D rigid;
     SpriteRenderer spriteRenderer;
-    Animator anim;  
+    Animator anim;
+    CapsuleCollider2D capsuleCollider;
     private void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
+        capsuleCollider = GetComponent<CapsuleCollider2D>();
     }
     private void Update()
     {
@@ -80,8 +83,36 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
+     void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.gameObject.tag == "Item")
+        {
+            //point
+            bool isBronze = collision.gameObject.name.Contains("BronzeCoin");
+            bool isSliver = collision.gameObject.name.Contains("SliverCoin");
+            bool isGold = collision.gameObject.name.Contains("GoldCoin");
+
+            if (isBronze)
+                gameManager.statePoint += 50;
+            else if (isSliver)
+                gameManager.statePoint += 100;
+            else if (isGold)
+                gameManager.statePoint += 300;
+            //Deactive
+            collision.gameObject.SetActive(false);
+        }else if (collision.gameObject.tag == "Finish")
+        {
+            //Next Stage
+            gameManager.NextStage();
+        }
+    }
+
+
     void OnAttack(Transform enemy)
     {
+        //point
+        gameManager.statePoint += 100;
+
         //Attack Reaction
         rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
 
@@ -92,6 +123,8 @@ public class PlayerMove : MonoBehaviour
 
     void OnDamaged(Vector2 targetPosition)
     {
+        //health down
+        gameManager.HealthDown();
         //On Damaged
         gameObject.layer = 11;
 
@@ -114,5 +147,21 @@ public class PlayerMove : MonoBehaviour
         gameObject.layer = 10;
         //View Alpha
         spriteRenderer.color = new Color(1, 1, 1, 1);
+    }
+
+    public void OnDie()
+    {
+        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+
+        spriteRenderer.flipY = true;
+
+        capsuleCollider.enabled = false;
+
+        rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
+    }
+
+    public void VelocityZero()
+    {
+        rigid.velocity = Vector2.zero;
     }
 }
