@@ -71,8 +71,23 @@ public class PlayerMove : MonoBehaviour
     {
         if(collision.gameObject.tag == "Enemy")
         {
-            OnDamaged(collision.transform.position);
+            //Atack
+            if(rigid.velocity.y < 0 && transform.position.y > collision.transform.position.y)
+            {
+                OnAttack(collision.transform);
+            }else
+                OnDamaged(collision.transform.position);
         }
+    }
+
+    void OnAttack(Transform enemy)
+    {
+        //Attack Reaction
+        rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
+
+        //Attack Enemy
+        EnemyMove enemyMove = enemy.GetComponent<EnemyMove>();
+        enemyMove.OnDamaged();
     }
 
     void OnDamaged(Vector2 targetPosition)

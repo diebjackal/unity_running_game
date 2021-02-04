@@ -5,16 +5,22 @@ using UnityEngine;
 public class EnemyMove : MonoBehaviour
 {
     private int sec = 5;
-    public int nextMove;   
+    public int nextMove;
+
     Rigidbody2D rigid;
     Animator anim;
     SpriteRenderer spriteRenderer;
+    CapsuleCollider2D capsuleCollider;
     void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        Think();
+        capsuleCollider = GetComponent<CapsuleCollider2D>();
+
+        //Enemy Move
+        anim.SetInteger("WalkSpeed", 0);
+        Invoke("Think", sec);
     }
 
     private void FixedUpdate()
@@ -56,4 +62,23 @@ public class EnemyMove : MonoBehaviour
         CancelInvoke();
         Invoke("Think", sec);
     }
+
+    public void OnDamaged()
+    {
+        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+
+        spriteRenderer.flipY = true;
+
+        capsuleCollider.enabled = false;
+
+        rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
+
+        Invoke("DeActive", sec);
+    }
+
+    void DeActive()
+    {
+        gameObject.SetActive(false);
+    }
+
 }
