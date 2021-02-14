@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class gameManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public float Level(int score)
     {
-        
-    }
+        int defaultSpeed = -5;
+        int increSpeed = (score * -1) / 100;
+        if (increSpeed < -5)
+        {
+            increSpeed = -5;
+        }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        return defaultSpeed + increSpeed;
     }
 }
